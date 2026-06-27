@@ -1,0 +1,5 @@
+name: ALBSell
+version: 1.0.0
+main: com.aayan.albsell.ALBSell
+depend: [ALBCore]
+api-version: "1.21"
