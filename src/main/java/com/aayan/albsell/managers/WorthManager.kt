@@ -1,4 +1,4 @@
-package com.aayan.albsell
+package com.aayan.albsell.managers
 
 import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
@@ -35,7 +35,7 @@ object WorthManager {
             prices[material] = config.getDouble(key)
         }
 
-        plugin.logger.info("Loaded ${prices.size} sell prices.")
+        println("\u001B[32m  Loaded ${prices.size} sell prices.\u001B[0m")
 
         if (invalidMaterials.isNotEmpty()) {
             plugin.logger.warning("${invalidMaterials.size} invalid material(s) found in worth.yml:")
