@@ -3,6 +3,9 @@ package com.aayan.albsell
 import com.aayan.albcore.logging.DiscordLogger
 import com.aayan.albsell.commands.AdminCommand
 import com.aayan.albsell.commands.SellCommand
+import com.aayan.albsell.managers.ConfigManager
+import com.aayan.albsell.managers.ConfigManager.discordUsername
+import com.aayan.albsell.managers.ConfigManager.discordWebhook
 import com.aayan.albsell.managers.WorthManager
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -25,9 +28,12 @@ class ALBSell : JavaPlugin() {
         println("$green=======================================================$reset")
 
         WorthManager.load(this)
+        ConfigManager.reload(this)
         SellCommand.register(this)
         AdminCommand.register(this)
-        DiscordLogger.setup("sell", "https://discord.com/api/webhooks/1521485737055485993/cCnkufZVvbiv6Jk2Gi5PPuN_VTmTyb1QsynxrIsc8SmyhkU22tUg8V8jXmpNuSu50Ewz")
+        if (discordWebhook.isNotEmpty()) {
+            DiscordLogger.setup("sell",discordWebhook, discordUsername.ifEmpty { "ALBSell Logger" })
+        }
     }
 
     override fun onDisable() {

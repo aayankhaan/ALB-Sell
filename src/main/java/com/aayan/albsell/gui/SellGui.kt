@@ -8,10 +8,12 @@ import com.aayan.albcore.utils.ItemBuilder
 import com.aayan.albcore.utils.MessageUtil
 import com.aayan.albcore.utils.SoundUtil
 import com.aayan.albsell.managers.SellManager
+import com.aayan.albsell.managers.SellResult
 import com.aayan.albsell.managers.WorthManager
 import org.bukkit.Material
 import org.bukkit.block.ShulkerBox
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BlockStateMeta
 
 object SellGui {
@@ -41,7 +43,7 @@ object SellGui {
             .open(player)
     }
 
-    private fun isAllowedItem(item: org.bukkit.inventory.ItemStack): Boolean {
+    private fun isAllowedItem(item: ItemStack): Boolean {
         val meta = item.itemMeta
         val isShulker = meta is BlockStateMeta && meta.blockState is ShulkerBox
 
@@ -91,8 +93,7 @@ object SellGui {
         )
     }
 
-
-    private fun logSaleToDiscord(player: Player, result: com.aayan.albsell.managers.SellResult) {
+    private fun logSaleToDiscord(player: Player, result: SellResult) {
         if (!DiscordLogger.isLoaded("sell")) return
 
         val breakdown = result.sellItems
@@ -103,7 +104,7 @@ object SellGui {
 
         val breakdownText = breakdown.joinToString("\n") { (material, amount) ->
             "**${formatMaterialName(material)}** x$amount"
-        }
+        }.take(1024)
 
         DiscordLogger.on("sell").embed {
             title = "Item Sold"
@@ -111,7 +112,7 @@ object SellGui {
             color = DiscordColor.GREEN
             timestamp = true
             field("Items Sold", breakdownText, inline = false)
-            field("Total Earned", "$${SellManager.formatTotal(result.total)} coins", inline = true)
+            field("Total Earned", "$${SellManager.formatTotal(result.total)} $", inline = true)
             field("Player", player.name, inline = true)
             footer = "ALBSell"
         }

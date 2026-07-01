@@ -2,6 +2,7 @@ package com.aayan.albsell.commands
 
 import com.aayan.albcore.commands.CommandUtil
 import com.aayan.albcore.utils.MessageUtil
+import com.aayan.albsell.managers.ConfigManager
 import com.aayan.albsell.managers.WorthManager
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -19,6 +20,7 @@ object AdminCommand {
             subcommand("reload") {
                 action { sender, _ ->
                     WorthManager.reload(plugin)
+                    ConfigManager.reload(plugin)
                     MessageUtil.send(sender, "&aReloaded!")
                 }
             }
