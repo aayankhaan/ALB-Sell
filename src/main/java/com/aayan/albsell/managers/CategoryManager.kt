@@ -176,6 +176,6 @@ object CategoryManager {
     }
 
     fun resetCategory(player: Player, categoryId: String) {
-        PlayerDataUtil.set(player, "multiplier.$categoryId.progress", 0.0)
+        PlayerDataUtil.set(player, "ALBSell.multiplier.$categoryId.progress", 0.0)
     }
 }
