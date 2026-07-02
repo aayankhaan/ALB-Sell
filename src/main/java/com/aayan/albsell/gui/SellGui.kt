@@ -54,7 +54,7 @@ object SellGui {
         return hasNoLore && (WorthManager.hasWorth(item.type) || isShulker)
     }
 
-    private fun sellButtonItem(player: Player, gui: GuiBuilder): org.bukkit.inventory.ItemStack {
+    private fun sellButtonItem(player: Player, gui: GuiBuilder): ItemStack {
         val result = SellManager.process(player, gui.getItems(SELL_SLOTS))
 
         return if (result.sellItems.isEmpty()) {
@@ -79,19 +79,18 @@ object SellGui {
         }
 
         MessageUtil.send(player, "&#0dff00+ $ &f${SellManager.formatTotal(result.total)}")
-
         logSaleToDiscord(player, result)
-
         gui.clearItems(SELL_SLOTS)
-        result.sellItems.groupBy { CategoryManager.getCategory(it.type) }
-            .forEach { (category, items) ->
+        gui.addItems(result.returnItems)
+        result.sellItems.groupBy { CategoryManager.getCategory(it.type) }.forEach { (category, items) ->
                 if (category != null) {
-                    val worth = items.sumOf { (WorthManager.getWorth(it.type) ?: 0.0) * it.amount }
+                    val worth = items.sumOf {
+                        (WorthManager.getWorth(it.type) ?: 0.0) * it.amount
+                    }
                     CategoryManager.addProgress(player, category.id, worth, ALBSell.instance)
                 }
             }
 
-        player.closeInventory()
         SoundUtil.play(player, "minecraft:entity.player.levelup")
 
         AnimationUtil.animateTitleNumber(
@@ -99,6 +98,7 @@ object SellGui {
             "&#0dff00&l+ $%amount%",
             to = result.total.toLong()
         )
+        player.closeInventory()
     }
 
     private fun logSaleToDiscord(player: Player, result: SellResult) {
@@ -125,7 +125,7 @@ object SellGui {
             footer = "ALBSell"
         }
     }
-    private fun formatMaterialName(material: org.bukkit.Material): String {
+    private fun formatMaterialName(material: Material): String {
         return material.name.lowercase()
             .split("_")
             .joinToString(" ") { it.replaceFirstChar { c -> c.uppercase() } }
