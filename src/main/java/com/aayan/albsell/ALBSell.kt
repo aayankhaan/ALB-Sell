@@ -3,6 +3,7 @@ package com.aayan.albsell
 import com.aayan.albcore.logging.DiscordLogger
 import com.aayan.albsell.commands.AdminCommand
 import com.aayan.albsell.commands.SellCommand
+import com.aayan.albsell.managers.CategoryManager
 import com.aayan.albsell.managers.ConfigManager
 import com.aayan.albsell.managers.ConfigManager.discordUsername
 import com.aayan.albsell.managers.ConfigManager.discordWebhook
@@ -11,7 +12,15 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class ALBSell : JavaPlugin() {
 
+
+    companion object {
+        lateinit var instance: ALBSell
+        private set
+    }
+
+
     override fun onEnable() {
+        instance = this
         val green = "\u001B[32m"
         val reset = "\u001B[0m"
 
@@ -28,7 +37,8 @@ class ALBSell : JavaPlugin() {
         println("$green=======================================================$reset")
 
         WorthManager.load(this)
-        ConfigManager.reload(this)
+        ConfigManager.load(this)
+        CategoryManager.load(this)
         SellCommand.register(this)
         AdminCommand.register(this)
         if (discordWebhook.isNotEmpty()) {

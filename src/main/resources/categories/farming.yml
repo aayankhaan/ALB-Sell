@@ -1,0 +1,24 @@
+name: "Farming"
+
+tier-up:
+  message: ""
+  title: ""
+  subtitle: ""
+  sound: ""
+
+tiers:
+  - required: 10000
+    multiplier: 1.1
+  - required: 30000
+    multiplier: 1.5
+  - required: 100000
+    multiplier: 2.0
+
+items:
+  - WHEAT
+  - CARROT
+  - POTATO
+  - SUGAR_CANE
+  - PUMPKIN
+  - MELON
+  - BEETROOT

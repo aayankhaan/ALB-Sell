@@ -7,6 +7,8 @@ import com.aayan.albcore.utils.AnimationUtil
 import com.aayan.albcore.utils.ItemBuilder
 import com.aayan.albcore.utils.MessageUtil
 import com.aayan.albcore.utils.SoundUtil
+import com.aayan.albsell.ALBSell
+import com.aayan.albsell.managers.CategoryManager
 import com.aayan.albsell.managers.SellManager
 import com.aayan.albsell.managers.SellResult
 import com.aayan.albsell.managers.WorthManager
@@ -53,7 +55,7 @@ object SellGui {
     }
 
     private fun sellButtonItem(player: Player, gui: GuiBuilder): org.bukkit.inventory.ItemStack {
-        val result = SellManager.process(gui.getItems(SELL_SLOTS))
+        val result = SellManager.process(player, gui.getItems(SELL_SLOTS))
 
         return if (result.sellItems.isEmpty()) {
             ItemBuilder(Material.RED_STAINED_GLASS_PANE)
@@ -68,7 +70,7 @@ object SellGui {
     }
 
     private fun handleSellClick(player: Player, gui: GuiBuilder) {
-        val result = SellManager.process(gui.getItems(SELL_SLOTS))
+        val result = SellManager.process(player, gui.getItems(SELL_SLOTS))
 
         if (result.sellItems.isEmpty()) {
             MessageUtil.send(player, "&cNo items to sell!")
@@ -81,7 +83,13 @@ object SellGui {
         logSaleToDiscord(player, result)
 
         gui.clearItems(SELL_SLOTS)
-        result.returnItems.forEach { item -> gui.addItem(item) }
+        result.sellItems.groupBy { CategoryManager.getCategory(it.type) }
+            .forEach { (category, items) ->
+                if (category != null) {
+                    val worth = items.sumOf { (WorthManager.getWorth(it.type) ?: 0.0) * it.amount }
+                    CategoryManager.addProgress(player, category.id, worth, ALBSell.instance)
+                }
+            }
 
         player.closeInventory()
         SoundUtil.play(player, "minecraft:entity.player.levelup")

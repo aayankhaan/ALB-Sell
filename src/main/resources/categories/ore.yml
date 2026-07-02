@@ -1,0 +1,25 @@
+name: "Ore"
+
+tier-up:
+  message: ""
+  title: ""
+  subtitle: ""
+  sound: ""
+
+tiers:
+  - required: 25000
+    multiplier: 1.25
+  - required: 75000
+    multiplier: 1.75
+  - required: 200000
+    multiplier: 3.0
+
+items:
+  - DIAMOND
+  - IRON_INGOT
+  - GOLD_INGOT
+  - COAL
+  - EMERALD
+  - LAPIS_LAZULI
+  - REDSTONE
+  - QUARTZ
