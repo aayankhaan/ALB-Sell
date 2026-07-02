@@ -112,7 +112,7 @@ object SellGui {
             color = DiscordColor.GREEN
             timestamp = true
             field("Items Sold", breakdownText, inline = false)
-            field("Total Earned", "$${SellManager.formatTotal(result.total)} $", inline = true)
+            field("Total Earned", "$${SellManager.formatTotal(result.total)}", inline = true)
             field("Player", player.name, inline = true)
             footer = "ALBSell"
         }
