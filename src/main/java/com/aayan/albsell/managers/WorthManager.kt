@@ -12,6 +12,8 @@ object WorthManager {
 
     private val prices = mutableMapOf<Material, Double>()
 
+    val loadedPrices: Int get() = prices.size
+
     fun load(plugin: JavaPlugin) {
         file = File(plugin.dataFolder, "worth.yml")
 
@@ -35,8 +37,6 @@ object WorthManager {
             prices[material] = config.getDouble(key)
         }
 
-        println("\u001B[32m  Loaded ${prices.size} sell prices.\u001B[0m")
-
         if (invalidMaterials.isNotEmpty()) {
             plugin.logger.warning("${invalidMaterials.size} invalid material(s) found in worth.yml:")
 
@@ -46,7 +46,10 @@ object WorthManager {
         }
     }
 
-    fun reload(plugin: JavaPlugin) = load(plugin)
+    fun reload(plugin: JavaPlugin) {
+        load(plugin)
+        println("\u001B[32m  Loaded ${prices.size} sell prices.\u001B[0m")
+    }
 
     fun getWorth(material: Material): Double? =
         prices[material]

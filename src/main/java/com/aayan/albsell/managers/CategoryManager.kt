@@ -33,15 +33,22 @@ object CategoryManager {
         "ore.yml",
         "farming.yml"
     )
+    val categoryIds: Set<String> get() = categories.keys
+    val loadedCategory: Int get() = categories.size
 
     fun load(plugin: JavaPlugin) {
         materialToCategory.clear()
         categories.clear()
 
-        val folder = File(plugin.dataFolder, "categories").apply { mkdirs() }
+        val folder = File(plugin.dataFolder, "categories")
 
-        defaultCategories.forEach {
-            plugin.saveResource("categories/$it", false)
+
+        if (!folder.exists()) {
+            folder.mkdirs()
+
+            defaultCategories.forEach {
+                plugin.saveResource("categories/$it", false)
+            }
         }
 
 
@@ -49,16 +56,18 @@ object CategoryManager {
             loadCategory(file)
         }
 
-        println("\u001B[32m  Loaded ${categories.size} categories.\u001B[0m")
     }
 
-    fun reload(plugin: JavaPlugin) = load(plugin)
+    fun reload(plugin: JavaPlugin) {
+        load(plugin)
+        println("\u001B[32m  Loaded ${categories.size} categories.\u001B[0m")
+    }
 
     fun getCategory(material: Material): Category? = materialToCategory[material]
 
     fun getMultiplier(player: Player, categoryId: String): Double {
         val category = categories[categoryId] ?: return 1.0
-        val progress = PlayerDataUtil.getDouble(player, "multiplier.$categoryId.progress")
+        val progress = PlayerDataUtil.getDouble(player, "ALBSell.multiplier.$categoryId.progress")
 
         var multiplier = 1.0
         for (tier in category.tiers) {
@@ -72,7 +81,7 @@ object CategoryManager {
 
     fun addProgress(player: Player, categoryId: String, amount: Double, plugin: JavaPlugin) {
         val category = categories[categoryId] ?: return
-        val key = "multiplier.$categoryId.progress"
+        val key = "ALBSell.multiplier.$categoryId.progress"
 
         val current = PlayerDataUtil.getDouble(player, key)
         val new = current + amount
@@ -88,7 +97,7 @@ object CategoryManager {
 
     fun getNextTier(player: Player, categoryId: String): Tier? {
         val category = categories[categoryId] ?: return null
-        val progress = PlayerDataUtil.getDouble(player, "multiplier.$categoryId.progress")
+        val progress = PlayerDataUtil.getDouble(player, "ALBSell.multiplier.$categoryId.progress")
 
         return category.tiers.firstOrNull { it.required > progress }
     }
@@ -101,7 +110,7 @@ object CategoryManager {
 
         val items = config.getStringList("items").mapNotNull { key ->
             Material.matchMaterial(key).also {
-                if (it == null) println("[CategoryManager] Unknown material '$key' in ${file.name}")
+                if (it == null) println("[ALBSell] Unknown material '$key' in ${file.name}")
             }
         }.toSet()
 
@@ -166,4 +175,7 @@ object CategoryManager {
         }
     }
 
+    fun resetCategory(player: Player, categoryId: String) {
+        PlayerDataUtil.set(player, "multiplier.$categoryId.progress", 0.0)
+    }
 }
