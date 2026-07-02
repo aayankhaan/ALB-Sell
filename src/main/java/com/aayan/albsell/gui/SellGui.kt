@@ -1,6 +1,7 @@
 package com.aayan.albsell.gui
 
 import com.aayan.albcore.gui.GuiBuilder
+import com.aayan.albcore.hooks.VaultHook
 import com.aayan.albcore.logging.DiscordColor
 import com.aayan.albcore.logging.DiscordLogger
 import com.aayan.albcore.utils.AnimationUtil
@@ -78,6 +79,7 @@ object SellGui {
             return
         }
 
+        VaultHook.giveMoney(player, result.total)
         MessageUtil.send(player, "&#0dff00+ $ &f${SellManager.formatTotal(result.total)}")
         logSaleToDiscord(player, result)
         gui.clearItems(SELL_SLOTS)
